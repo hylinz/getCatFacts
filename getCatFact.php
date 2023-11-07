@@ -7,34 +7,34 @@ function getCatFact()
         // Set a 403 Forbidden response code
         http_response_code(403);
         $data = 'Wrong input, access denied.';
-        echo $data;
-        return false;
-    }
-
-    $ch = curl_init();
-    curl_setopt($ch, CURLOPT_URL, 'https://catfact.ninja/fact');
-    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-
-    $response = curl_exec($ch);
-
-    if (curl_errno($ch)) {
-        // Set a 404 Not Found response code for cURL errors
-        http_response_code(404);
-        echo 'cURL error: ' . curl_error($ch);
     } else {
-        // Set a 200 OK response code for a successful response
-        http_response_code(200);
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, 'https://catfact.ninja/fact');
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
-        curl_close($ch);
+        $response = curl_exec($ch);
 
-        $data = json_decode($response);
-
-        if ($data && isset($data->fact)) {
-            echo $data->fact;
+        if (curl_errno($ch)) {
+            // Set a 404 Not Found response code for cURL errors
+            http_response_code(404);
+            $data = 'cURL error: ' . curl_error($ch);
         } else {
-            echo 'No cat fact yet';
+            // Set a 200 OK response code for a successful response
+            http_response_code(200);
+
+            curl_close($ch);
+
+            $data = json_decode($response);
+
+            if ($data && isset($data->fact)) {
+                $data = $data->fact;
+            } else {
+                $data = 'No cat fact yet';
+            }
         }
     }
+
+    echo $data;
 }
 
 getCatFact();

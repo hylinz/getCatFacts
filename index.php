@@ -18,40 +18,45 @@
     <p style="color: red" id='error'></p>
     <input id='stuff' type='text' placeholder='number 42' />
 
-    <script>
-        let btn = document.getElementById('getFactButton');
-        let err = document.getElementById('error');
-        let input = document.getElementById('stuff');
 
-        const fetchCatFact = () => {
-            if (input.value === '' || input.value !== '42') {
-                console.log(input.value)
-                err.innerHTML = 'input 42 you dummy'
-            } else {
-                err.innerHTML = ''
-                console.log('Button clicked'); // Debugging
-                const parameterValue = input.value; // Replace with your desired parameter value
 
-                // Construct the URL with the parameter
-                const url = `getCatFact.php?param=${parameterValue}`;
+<script>
+    const btn = document.getElementById('getFactButton');
+    const err = document.getElementById('error');
+    const input = document.getElementById('stuff');
 
-                fetch(url)
-                    .then(response => response.text())
-                    .then(data => {
-                        console.log('Data received:', data); // Debugging
-                        if (data.trim() !== '') { // Check if data is not an empty string
-                            document.querySelector('.fact').innerHTML = data;
-                        } else {
-                            document.querySelector('.fact').innerHTML = 'No cat fact yet';
-                        }
-                    })
-                    .catch(error => console.error(error));
-            }
-            btn.addEventListener('click', function() {
-                fetchCatFact()
-            })
+    const fetchCatFact = () => {
+        const parameterValue = input.value;
+
+        if (parameterValue === '' || parameterValue !== '42') {
+            err.innerHTML = 'Input must be "42"';
+            return;
         }
-    </script>
+
+        err.innerHTML = '';
+
+        const url = `getCatFact.php?param=${parameterValue}`;
+
+        fetch(url)
+            .then(response => {
+                if (response.status === 200) {
+                    return response.text();
+                } else {
+                    err.innerHTML = 'Request failed with status: ' + response.status;
+                    return Promise.reject('Request failed');
+                }
+            })
+            .then(data => {
+                document.querySelector('.fact').innerHTML = data;
+            })
+            .catch(error => console.error(error));
+    }
+
+</script>
+</body>
+</html>
+
+
 </body>
 
 </html>
